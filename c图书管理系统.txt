@@ -1,0 +1,207 @@
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<conio.h>
+#define SIZE 100
+typedef struct
+{
+	int isbn;  //书号
+	char name[100];//书名
+	float price;  //价格.
+	char author[50];//作者
+}Book;
+
+//2.图书信息输入：函数
+void input(Book *a,int*n)
+{
+	Book *p;
+	int i=1,n1;
+	system("cls");
+	printf("\n请输入图书数（1-80）：");
+	scanf("%d",&n1);
+	printf("\n请输入图书信息:书号 书名 价格 作者:");
+	for(p=a+(*n);p<a+(*n)+n1;p++)//多名图书信息输入
+		{  //输入一本图书的信息到 p
+			printf("\n%d:",i++);//图书编号
+			scanf("%d %s %f %s",&p->isbn,p->name,&p->price,p->author);
+		}
+    *n=*n+n1;
+	printf("\n按任意键返回！!");
+	getch();
+}
+//3.输出功能函数
+void display(Book *a,int n)
+{
+	Book *p;
+	system("cls");
+	for(p=a;p<a+n;p++)
+	{
+		printf("%10d %10s %10.1f %10s\n",p->isbn,p->name,p->price,p->author);
+		printf("\n");
+	}
+	printf("\n按任意键返回！");
+	getch();
+}
+//4.查找功能函数，
+void find(Book *a,int n)
+{
+	int k=0;
+	int m;
+	Book*p;
+	system("cls");
+	printf("\n请输入要查询的书号：");
+	scanf("%d",&m);
+	for(p=a;p<a+n;p++)
+	{
+		if(m==p->isbn)
+		{			//若想等，就找到了
+			k=1;//找到匹配项，则给k赋值为1
+		printf("已找到，是:%d\t%s\t%.1f\t%s\n",p->isbn,p->name,p->price,p->author);
+			break;
+		}
+	}
+	if(!k)
+		printf("找不到查询逇成绩！\n");
+	printf("\n按任意键返回！");
+	getch();
+}
+//5.删除功能 ，
+void del(Book *a,int*n)
+{
+	int i,j,k=0;
+	Book *p;
+	int isbn;
+	system("cls");
+	printf("\n请输入要删除的书号：");
+	scanf("%d",&isbn);
+	for(i=0,p=a;p<a+*n;i++)
+	{
+		if(isbn==(p+i)->isbn)
+		{
+			k=1;//找到匹配项，则给k赋值为1
+			for(j=i;j<*n-1;j++)//删除
+			{
+				*(a+j)=*(a+j+1);
+			}
+			(*n)--;
+			printf("删除成功！\n");
+			break;
+		}
+	}
+	if(!k)
+		printf("找不到要删除的成绩！\n");
+	printf("\n按任意键返回！\n");
+	getch();
+}
+//6.排序
+void sort(Book *a,int n)
+{
+	int i,j;
+	Book t;
+	system("cls");
+	for(i=0;i<n-1;i++)
+	{
+		for(j=0;j<n-i-1;j++)
+		{
+			if((a[j].price)<(a[j+1].price))
+			{
+				t=a[j];
+				a[j]=a[j+1];
+				a[j+1]=t;
+			}
+		}
+	}
+	printf("\n排序结果是：\n");
+	for(i=0;i<n;i++)
+	{
+		printf("%d\t%s\t%.1f%\t%10s",a[i].isbn,a[i].name,a[i].price,a[i].author);
+		printf("/n");
+	}
+	printf("\n按任意键返回！");
+	getch();
+}
+
+void save(Book *a,int n)
+{
+	FILE *fp;
+	Book *p;
+	int i;
+
+	if((fp=fopen("f:\\图书管理系统.txt","w"))==NULL)
+	{
+		printf("can't open file\n");
+		exit(0);
+	}
+	for(p=a;p<a+n;p++)
+	{
+		fprintf(fp,"%10d%10s%10.1f%s\n",p->isbn,p->name,p->price,p->author);
+		printf("\n");
+	}
+	fclose(fp);
+	printf("按任意键继续");
+	getch();
+}
+void read(Book *a,int *n)
+{
+	FILE *fp;
+	Book *p;
+	int i;
+
+	if((fp=fopen("f:\\book.txt","r"))==NULL)
+	{
+		printf("can't open file\n");
+		exit(0);
+	}
+	for(p=a;fscanf(fp,"%d%s%f%s",&p->isbn,p->name,&p->price,p->author)!=EOF;p++)
+	{
+		//int x=fscanf(fp,"%d%s%f%s",&p->isbn,p->name,&p->price,p->author);
+		printf("ok! ");
+		//if (x==0)  break;
+		(*n)++;
+	}
+
+
+	fclose(fp);
+	printf("按任意键继续");
+	getch();
+}
+void menu()
+{
+	printf("\n\n\n\t\t\t 欢迎使用图书馆图书管理系统\n\n\n");
+	printf("\t\t\t***************************\n");
+	printf("\t\t\t*          主菜单         *\n");
+	printf("\t\t\t***************************\n\n\n");
+	printf("\t\t         1 书号输入   2 书号删除\n\n");
+	printf("\t\t         3 书号查询   4 价格排序\n\n");
+	printf("\t\t         5 显示图书   6 图书保存\n\n");
+	printf("\t\t         7 退出系统\n\n");
+	printf("\t\t         请选择[1/2/3/4/5/6/7]:\n");
+}
+int main()
+{
+	int j,num=0;
+	Book book[SIZE];
+    read(book,&num);
+   while(1)
+	{
+	   	system("cls");
+		menu();
+		scanf("%d",&j);
+		switch(j)
+		{
+			//2.1执行和调用输入功能的函数：函数名，参数
+			case 1:input(book,&num);break;
+			case 2:del(book,&num);break;
+			case 3:find(book,num);break;
+			case 4:sort(book,num);break;
+			//3.1 执行和调用输出功能的函数
+			case 5:display(book,num);break;
+			case 6:save(book,num);break;
+			case 7:exit(0);
+			default:printf("输入错误，请重新输入！\n");
+		}
+	}
+
+}
+
+
